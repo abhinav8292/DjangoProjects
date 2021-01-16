@@ -1,0 +1,192 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+{% block body %}
+
+{% if Bid_placed %}
+{% if success %}
+<div class="alert alert-success" role="alert">
+    Bid placed successfully!!!
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    Bid not placed. Bid placed should be greater than current Bid.
+</div>
+{%endif%}
+{% endif %}
+
+{% if not listing.is_active and request.user != winner %}
+<div class="alert alert-primary" role="alert">
+    {{ winner.first_name }} has won the bid.
+</div>
+{% endif %}
+
+{% if request.user == winner %}
+<div class="alert alert-primary" role="alert">
+    Congratulations!!! {{ winner.first_name }} You have won the bidding.
+</div>
+{% endif %}
+
+<div class="container d-flex justify-content-center align-items-center">
+    <img src="{{listing.Image_Url}}" style="height: 400px;" class="img-fluid mt-4 mb-3" alt="{{listing.Title}}">
+</div>
+
+<div class="mx-md-3 mx-sm-1">
+    <div class="row">
+        <div class="col-md-5">
+            {% if listing.is_active %}
+            <h4>{{listing.Title}}<span class="badge badge-success">Active</span></h4>
+            {% else %}
+            <h4>{{listing.Title}}<span class="badge badge-secondary">Inactive</span></h4>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% if user.is_authenticated and request.user == listing.Creator %}
+    <form action="{% url 'listing_Page' listing.id %}" method="POST">
+        <div class="form-group">
+            <div class="row mx-auto" style="margin-bottom: -15px;">
+                {% csrf_token %}
+                <button type="submit" name="active" class="btn btn-danger btn-block">Deactivate This Auction</button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+
+    <div class="row mx-auto" style="background-color: #ececec;">
+        <div class="container col-md-6">
+            <div class="row mt-2">
+                <div class="col-3 d-flex justify-content-center">
+                    <label>Current Bid: </label>
+                </div>
+                <div class="col-9">
+                    <h5>USD {{bid}}</h5>
+                </div>
+
+            </div>
+
+            {% if listing.is_active %}
+            <form action="{% url 'listing_Page' listing.id %}" method="POST">
+                <div class="form-group">
+                    <div class="row justify-content-end">
+                        <div class="col-lg-3 col-md-5 col-9 mr-1">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                        </div>
+                        <div class="col-lg-6 col-md-4 col-9">
+                            <button type="submit" name="bid" class="btn btn-primary btn-sm">Place Bid</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <form action="{% url 'listing_Page' listing.id %}" method="POST">
+        <div class="form-group">
+            <div class="row mx-auto">
+                {% csrf_token %}
+                {% if not watchlisted %}
+                <button type="submit" name="watchlisted" class="btn btn-info btn-block">Add to Watchlist</button>
+                {% else %}
+                <button type="submit" name="de_watchlisted" class="btn btn-info btn-block">Remove from
+                    Watchlist</button>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+
+    <div class="container col-md-6">
+        <div class="row">
+            <div class="col-3 d-flex justify-content-center">Shipping:</div>
+            <div class="col-9">
+                <p><b>USD 13.99</b> Royal Mail International Tracked | <a href="#">See details</a> </p>
+                <p>International shipments may be subject to customs.</p>
+                <p> Item location: Diagon Alley, UK </p>
+                <p> Ships to: Worldwide <a href="#">See exclusions</a> </p>
+            </div>
+            <div class="col-3 d-flex justify-content-center">Delivery:</div>
+            <div class="col-9">
+                <p>Anytime between <strong>Aug 15th, 2020</strong> and <strong>Aug 19th, 2020</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-md-5">
+            <h5>Discription</h5>
+            <p>{{listing.Description}}</p>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+            <p>
+            <h5>Aditional Information</h5>
+            </p>
+
+            <table class="table table-sm">
+                <tbody>
+                    <tr>
+                        <th scope="row" style="background-color: #ececec;">Category</th>
+                        <td>{{listing.Category}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="background-color: #ececec;">Seller</th>
+                        <td>{{listing.Creator.first_name}}</td>
+                    </tr>
+                    <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    <h5>Comments</h5>
+    <br>
+    <div class="row mx-md-3">
+        <div class="overflow-auto col-md-9" style="background-color: #ececec; height: 250px;">
+
+            {% for comment in comments %}
+            <div class="row">
+                <div class="col-4 col-md-2 col-lg-1">
+                    <img src="{% static 'auctions\images\PicsArt_11-18-08.18.15.png' %}" alt="default-user-avatar"
+                        style="margin-right: 15px; margin-left: 20px; margin-top: 8px; height: 50px; width: 50px;">
+                </div>
+                <div class="col-8 col-md-10 col-lg-11 mt-1 px-1 px-md-5">
+                    <div class="row">
+                        <strong>{{ comment.Commenter }}</strong>
+                    </div>
+                    <div class="row">
+                        {{ comment.Comment }}
+                    </div>
+                </div>
+            </div>
+            <hr>
+            {% endfor %}
+
+        </div>
+    </div>
+    <br>
+    <div class="row mx-md-3">
+        <div class="col-3 col-md-2 col-lg-1">
+            {% load static %}
+            <img src="{% static 'auctions\images\PicsArt_11-18-08.18.15.png' %}" alt="default-user-avatar"
+                style="margin-right: 15px; margin-left: 20px; margin-top: 8px; height: 50px; width: 50px;">
+        </div>
+
+        <div class="col-9 col-md-7 col-lg-8 mt-1 px-2">
+            <form action="{% url 'listing_Page' listing.id %}" method="POST">
+                <div class="form-group">
+                    {% csrf_token %}
+                    {{ form2.as_p }}
+                    <button type="submit" name="commented" class="btn btn-primary">Add Comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

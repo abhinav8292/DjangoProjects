@@ -1,0 +1,28 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <br>
+    <div id="title">
+        <h3>Active Listings</h3>
+    </div>
+    <br>
+
+    <div class="row mx-auto" style="width: 90%;">
+        {% for listing in listings %}
+        <div class="col-lg-3 col-md-4 col-12 p-0">
+            <a id="link" href="{% url 'listing_Page' listing.id %}">
+                <div class="card h-100">
+                    <img src="{{listing.Image_Url}}" class="card-img-top img-fluid" alt="...">
+                    <div class="card-body">
+                        <span class="card-title">{{listing.Title}}</span>
+                        <p class="card-text text-right">$ {{listing.Start_Bid}}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if message %}
+<div>{{ message }}</div>
+{%endif%}
+
+<div class="image">
+    <img src="{{listing.Image_Url}}" class="img-fluid" alt="{{listing.Title}}">
+</div>
+<h2>Listing: {{listing.Title}}</h2>
+<br>
+<h6>Discription: {{listing.Description}}</h6>
+{% if bid %}
+<h2>$ {{ bid }}</h2>
+{% else %}
+<h2>$ {{ listing.Start_Bid }}</h2>
+{% endif %}
+
+<h2>Details</h2>
+<div class="list">
+    <ul>
+        <li>Listed by: </li>
+        <li>Category: {{listing.Category}}</li>
+    </ul>
+</div>
+
+
+{% endblock %}
